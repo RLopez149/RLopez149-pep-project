@@ -28,7 +28,7 @@ public class SocialMediaDAO {
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
                 Message message = new Message(rs.getInt("message_id"), rs.getInt("posted_by"), rs.getString("message_text"),
-                        rs.getBigint("time_posted_epoch"));
+                        rs.getLong("time_posted_epoch"));
                 messages.add(message);
             }
         }catch(SQLException e){
