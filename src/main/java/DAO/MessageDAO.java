@@ -82,19 +82,27 @@ public class MessageDAO {
     public Message deleteMessageByMessageId(int message_id){
         Connection connection = ConnectionUtil.getConnection();
         try {
-            String sql = "delete * from message where message_id = ?;";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            String selectSql = "SELECT * FROM message WHERE message_id = ?";
+            PreparedStatement selectStatement = connection.prepareStatement(selectSql);
+            selectStatement.setInt(1, message_id);
 
-            preparedStatement.setInt(1, message_id);
-
-            ResultSet rs = preparedStatement.executeQuery();
-            while(rs.next()){
-                Message message = new Message(rs.getInt("message_id"),
+            ResultSet rs = selectStatement.executeQuery();
+            Message message = null;
+            if (rs.next()) {
+                message = new Message(
+                    rs.getInt("message_id"),
                     rs.getInt("posted_by"),
                     rs.getString("message_text"),
-                    rs.getLong("time_posted_epoch"));
-                return message;
+                    rs.getLong("time_posted_epoch")
+                );
             }
+
+            if (message != null) {
+                String deleteSql = "DELETE FROM message WHERE message_id = ?";
+                PreparedStatement deleteStatement = connection.prepareStatement(deleteSql);
+                deleteStatement.setInt(1, message_id);
+            }
+            return message;
         }catch(SQLException e){
             System.out.println(e.getMessage());
         }
@@ -102,13 +110,14 @@ public class MessageDAO {
     }
 
     //TODO: Update Message Given Message Id
-    public Message updateMessageByMessageId(int message_id){
+    public Message updateMessageByMessageId(int message_id, String message_text){
         Connection connection = ConnectionUtil.getConnection();
         try {
-            String sql = "select * from message where message_id = ?;";
+            String sql = "update message set message_text = ? where message_id = ?;";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
-            preparedStatement.setInt(1, message_id);
+            preparedStatement.setString(1, message_text);
+            preparedStatement.setInt(2, message_id);
 
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){

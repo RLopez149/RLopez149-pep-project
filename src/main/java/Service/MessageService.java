@@ -35,14 +35,14 @@ public class MessageService {
 
     //TODO: Delete a Message Given Message Id using messageDAO
     public Message deleteMessageByMessageId (int message_id){
-        if (messageDAO.getMessageByMessageId(message_id) != null) return messageDAO.deleteMessageByMessageId(message_id);
-        else return null;
+        if (messageDAO.getMessageByMessageId(message_id) == null) return null;
+        else return messageDAO.deleteMessageByMessageId(message_id);
     }
 
     //TODO: Update Message Given Message Id using messageDAO
-    public Message updateMessageByMessageId (int message_id){
-        if (messageDAO.getMessageByMessageId(message_id) != null) return messageDAO.updateMessageByMessageId(message_id);
-        else return null;
+    public Message updateMessageByMessageId (int message_id, String Message_Text){
+        if (messageDAO.getMessageByMessageId(message_id) == null || Message_Text.isBlank() == true || Message_Text.length() > 255) return null;
+        else return messageDAO.updateMessageByMessageId(message_id, Message_Text);
     }
 
     //TODO: Get All Messages From User Given Account Id using messageDAO

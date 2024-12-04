@@ -90,16 +90,28 @@ public class SocialMediaController {
 
     private void getMessageByMessageIDHandler(Context ctx) throws JsonProcessingException{
         int message_id = Integer.parseInt(ctx.pathParam("message_id"));
-        ctx.json(messageService.getMessageByMessageId(message_id));
+        Message getMessage = messageService.getMessageByMessageId(message_id);
+
+        if (getMessage != null)ctx.json(getMessage);
+        else ctx.status(200);
     }
 
     private void deleteMessageByIDHandler(Context ctx) throws JsonProcessingException{
         int message_id = Integer.parseInt(ctx.pathParam("message_id"));
-        ctx.json(messageService.deleteMessageByMessageId(message_id));
+        Message deletedMessage = messageService.deleteMessageByMessageId(message_id);
+        if (deletedMessage != null) ctx.json(deletedMessage);
+        else ctx.status(200);
     }
     private void patchMessageByIDHandler(Context ctx) throws JsonProcessingException{
+        ObjectMapper mapper = new ObjectMapper();
+        Message message = mapper.readValue(ctx.body(), Message.class);
+
+        String updatedMessage = message.getMessage_text();
         int message_id = Integer.parseInt(ctx.pathParam("message_id"));
-        ctx.json(messageService.updateMessageByMessageId(message_id));
+
+        Message update = messageService.updateMessageByMessageId(message_id, updatedMessage);
+        if(update != null) ctx.json(mapper.writeValueAsString(update));
+        else ctx.status(400);
     }
 
     private void getMessagesByAccountIDHandler(Context ctx) throws JsonProcessingException{
