@@ -37,7 +37,7 @@ public class AccountDAO {
     public Account userLogin(String user, String pass){
         Connection connection = ConnectionUtil.getConnection();
         try {
-            String sql = "select from account where username = ? and password = ?;" ;
+            String sql = "select * from account where username = ? and password = ?;" ;
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             preparedStatement.setString(1, user);
