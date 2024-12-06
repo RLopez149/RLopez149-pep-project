@@ -118,13 +118,20 @@ public class MessageDAO {
 
             preparedStatement.setString(1, message_text);
             preparedStatement.setInt(2, message_id);
+            preparedStatement.executeUpdate();
 
-            ResultSet rs = preparedStatement.executeQuery();
-            while(rs.next()){
-                Message message = new Message(rs.getInt("message_id"),
+            String selectSql = "SELECT * FROM message WHERE message_id = ?";
+            PreparedStatement selectStatement = connection.prepareStatement(selectSql);
+            selectStatement.setInt(1, message_id);
+
+            ResultSet rs = selectStatement.executeQuery();
+            if (rs.next()) {
+                Message message = new Message(
+                    rs.getInt("message_id"),
                     rs.getInt("posted_by"),
                     rs.getString("message_text"),
-                    rs.getLong("time_posted_epoch"));
+                    rs.getLong("time_posted_epoch")
+                );
                 return message;
             }
         }catch(SQLException e){
